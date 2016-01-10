@@ -12,10 +12,13 @@ import Foundation
 
 class InterfaceController: WKInterfaceController {
 
+    @IBOutlet var startStopButton: WKInterfaceButton!
+    var running = false
+    var countdown: NSTimer!
+    
     override func awakeWithContext(context: AnyObject?) {
         super.awakeWithContext(context)
         
-        // Configure interface objects here.
     }
 
     override func willActivate() {
@@ -26,6 +29,34 @@ class InterfaceController: WKInterfaceController {
     override func didDeactivate() {
         // This method is called when watch view controller is no longer visible
         super.didDeactivate()
+    }
+    
+    @IBAction func startStopPressed() {
+        
+        if running {
+            
+            // stop
+            running = false
+            countdown.invalidate()
+            countdown = nil
+            startStopButton.setTitle("Start")
+            
+        } else {
+            
+            // start
+            running = true
+            countdown = NSTimer.scheduledTimerWithTimeInterval(5, target: self, selector: Selector("complete"), userInfo: nil, repeats: true)
+            startStopButton.setTitle("Stop")
+            
+        }
+        
+    }
+    
+    func complete() {
+        
+        print("Done!")
+        WKInterfaceDevice.currentDevice().playHaptic(WKHapticType.Start)
+        
     }
 
 }
